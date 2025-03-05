@@ -70,6 +70,11 @@ GEM
     date (3.4.1)
     diff-lcs (1.6.0)
     erubi (1.13.1)
+    factory_bot (6.5.1)
+      activesupport (>= 6.1.0)
+    factory_bot_rails (6.4.4)
+      factory_bot (~> 6.5)
+      railties (>= 5.0.0)
     ffi (1.17.1-x86_64-darwin)
     globalid (1.2.1)
       activesupport (>= 6.1)
@@ -183,6 +188,7 @@ PLATFORMS
 DEPENDENCIES
   bootsnap (>= 1.4.4)
   byebug
+  factory_bot_rails
   listen (~> 3.3)
   puma (~> 5.0)
   rails (~> 6.1.7, >= 6.1.7.10)

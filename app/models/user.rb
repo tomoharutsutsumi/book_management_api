@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  before_create :generate_account_number
+  before_validation :generate_account_number, on: :create
 
   has_many :transactions, dependent: :destroy
 
@@ -28,6 +28,7 @@ class User < ApplicationRecord
     amount_spent = transactions
                    .where(transaction_type: Transaction.transaction_types[:return], created_at: s_date..e_date)
                    .sum(:fee_amount)
+                   .to_f
 
     {
       period: period,

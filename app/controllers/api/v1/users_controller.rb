@@ -9,9 +9,30 @@ class Api::V1::UsersController < ApplicationController
     end
   end
 
+  def show
+    user = User.find(params[:id])
+
+    # Using includes for transactions to enable eager loading.
+    # Although currently the filtering is the same with or without includes,
+    # this may be beneficial for future transaction-related optimizations.
+    borrowed_books = Book
+      .includes(:transactions)
+      .where(
+        transactions: { user_id: user.id, transaction_type: Transaction.transaction_types[:borrow] }
+      )
+      .where(status: Book.statuses[:borrowed])
+
+    render json: {
+      id: user.id,
+      account_number: user.account_number,
+      balance: user.balance,
+      borrowed_book: borrowed_books.as_json(only: [:id, :title])
+    }
+  end
+
   private
 
   def user_params
-    params.require(:user).permit(:balance)
+    params.require(:user).permit(:id)
   end
 end

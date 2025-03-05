@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
-      resources :users, only: [:show, :create]
+      resources :users, only: [:show, :create] do
+        member do
+          get 'reports'
+        end
+      end
       resources :books, only: [] do
         member do
           get 'income'

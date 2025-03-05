@@ -30,6 +30,20 @@ class Api::V1::UsersController < ApplicationController
     }
   end
 
+  def reports
+    user = User.find(params[:id])
+    period = params[:period]
+
+    begin
+      report = user.report_for(period)
+      render json: report, status: :ok
+    rescue ArgumentError => e
+      render json: { error: e.message }, status: :unprocessable_entity
+    end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: "User not found" }, status: :not_found
+  end
+
   private
 
   def user_params

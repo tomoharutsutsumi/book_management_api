@@ -13,6 +13,23 @@ RSpec.describe Transaction, type: :model do
     it { should define_enum_for(:transaction_type).with_values(borrow: 0, return: 1) }
     it { should validate_presence_of(:fee_amount) }
     it { should validate_numericality_of(:fee_amount).is_greater_than_or_equal_to(0) }
+
+    context 'with invalid values' do
+      let!(:user) { create(:user, balance: 100.0) }
+      let!(:book) { create(:book, title: 'Test Book', status: :available) }
+
+      it 'raises an error with an invalid transaction_type' do
+        expect {
+          Transaction.new(user: user, book: book, transaction_type: 'invalid', fee_amount: 0.0)
+        }.to raise_error(ArgumentError)
+      end
+
+      it 'is invalid with a negative fee_amount' do
+        transaction = Transaction.new(user: user, book: book, transaction_type: :borrow, fee_amount: -5.0)
+        expect(transaction).not_to be_valid
+        expect(transaction.errors[:fee_amount]).to include("must be greater than or equal to 0")
+      end
+    end
   end
 
   describe 'enums' do

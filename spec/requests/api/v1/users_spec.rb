@@ -16,13 +16,29 @@ RSpec.describe 'Api::V1::Users', type: :request do
 
   describe 'GET /api/v1/users/:id' do
     let!(:user) { create(:user, balance: 50.0) }
+    let!(:book) { create(:book, title: 'Test Book', status: :available) }
+    before do
+      Transaction.process_borrow!(user, book)
+    end
     it 'shows the user account details' do
       get "/api/v1/users/#{user.id}", as: :json
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
       expect(json['id']).to eq(user.id)
       expect(json['current_balance']).to eq(50.0)
-      expect(json['borrowed_book']).to eq([])
+      expect(json['borrowed_book']).to eq([{"id"=>1, "title"=>"Test Book"}])
+    end
+
+     context 'when user returns book' do
+      it 'updates the user account details' do
+        Transaction.process_return!(user, book)
+        get "/api/v1/users/#{user.id}", as: :json
+        expect(response).to have_http_status(:ok)
+        json = JSON.parse(response.body)
+        expect(json['id']).to eq(user.id)
+        expect(json['current_balance']).to eq(40.0)
+        expect(json['borrowed_book']).to eq([])
+      end
     end
 
     context 'when user does not exist' do
@@ -38,8 +54,8 @@ RSpec.describe 'Api::V1::Users', type: :request do
     let!(:book) { create(:book, title: 'Test Book', status: :borrowed) }
     context 'when transactions exist in the current month' do
       before do
-        Transaction.create!(user: user, book: book, transaction_type: :borrow, fee_amount: 0.0, created_at: Time.current)
-        Transaction.create!(user: user, book: book, transaction_type: :return, fee_amount: 10.0, created_at: Time.current)
+        Transaction.process_borrow!(user, book)
+        Transaction.process_return!(user, book)
       end
 
       it 'returns a monthly report' do

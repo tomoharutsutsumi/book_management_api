@@ -1,17 +1,17 @@
 # README
 
-
 ## Overview
 
 The Book Management API is a Ruby on Rails application designed to manage a library’s book borrowing system. It provides endpoints for creating users, borrowing and returning books, querying user account status, and generating monthly/annual reports on user activity. Additionally, the API implements rate limiting via Rack::Attack and uses partial indexes on the transactions table for performance improvements.
 
-
 ## API Endpoints
 
 ### Users
+
 - **Create User**
+
   - **Endpoint:** `POST /api/v1/users`
-  - **Parameters:**  
+  - **Parameters:**
     - `user[balance]` (number): The initial balance for the user.
   - **Response:** Returns the newly created user’s ID.
   - **Example:**
@@ -24,19 +24,21 @@ The Book Management API is a Ruby on Rails application designed to manage a libr
   ```
 
 - **Show User (Account Status)**
+
   - **Endpoint:** `GET /api/v1/users/:id`
   - **Response:** Returns user details such as current balance, and borrowed books.
   - **Example:**
+
   ```bash
-  curl -X GET \                                                            
+  curl -X GET \
   https://book-management-api-whoq.onrender.com/api/v1/users/1
   ```
 
 - **User Report**
   - **Endpoint:** `GET /api/v1/users/:id/reports`
-  - **Query Parameter:**  
+  - **Query Parameter:**
     - `period`: "monthly" or "annual"
-  - **Response:**  
+  - **Response:**
     - `period`: Reporting period.
     - `start_date` and `end_date`: Date range of the report.
     - `borrowed_books_count`: Number of books borrowed during that period.
@@ -48,9 +50,10 @@ The Book Management API is a Ruby on Rails application designed to manage a libr
   ```
 
 ### Transactions
+
 - **Borrow a Book**
   - **Endpoint:** `POST /api/v1/transactions/borrow`
-  - **Parameters:**  
+  - **Parameters:**
     - `user_id`: ID of the user.
     - `book_id`: ID of the book.
   - **Response:** Returns a success message if the book is borrowed; otherwise, error messages if the book is unavailable or if the user's balance is insufficient.
@@ -60,10 +63,9 @@ The Book Management API is a Ruby on Rails application designed to manage a libr
   -d '{"user_id": 1, "book_id": 2}' \
   https://book-management-api-whoq.onrender.com/api/v1/transactions/borrow
   ```
-  
 - **Return a Book**
   - **Endpoint:** `POST /api/v1/transactions/return`
-  - **Parameters:**  
+  - **Parameters:**
     - `user_id`: ID of the user.
     - `book_id`: ID of the book.
   - **Response:** Returns a success message if the book is returned (with fee deducted), or an error if the book is not currently borrowed.
@@ -76,9 +78,10 @@ The Book Management API is a Ruby on Rails application designed to manage a libr
   ```
 
 ### Books
+
 - **Query Book Income**
   - **Endpoint:** `GET /api/v1/books/:id/income`
-  - **Query Parameters:**  
+  - **Query Parameters:**
     - `start_date`: Start of the date range (YYYY-MM-DD).
     - `end_date`: End of the date range (YYYY-MM-DD).
   - **Response:** Returns the total fee income collected from return transactions for the specified book over the given period.
@@ -121,16 +124,16 @@ The Book Management API is a Ruby on Rails application designed to manage a libr
   The class methods `process_borrow!` and `process_return!` encapsulate the complete transactional workflow. This includes updating the book's status, adjusting the user's balance, and saving transaction records—all within a database transaction to ensure data consistency. This approach moves business logic from the controllers to the models, keeping controllers lean and improving testability and maintainability.
 
 - **Performance Optimizations:**  
-  Partial indexes are employed on the transactions table to optimize queries based on transaction type, in preparation for future feature enhancements. 
+  Partial indexes are employed on the transactions table to optimize queries based on transaction type, in preparation for future feature enhancements.
   Additionally, as the number of users and transactions grows, I plan to review and possibly implement record-level locking to prevent race conditions during concurrent updates.
 
 **Rate Limiting:**
 
 - **Rack::Attack Configuration:**  
-  The API uses Rack::Attack to throttle requests based on IP address.  
-  - In the test environment, the limit is set to 10 requests per minute.  
+  The API uses Rack::Attack to throttle requests based on IP address.
+  - In the test environment, the limit is set to 10 requests per minute.
   - In production, the limit is higher.  
-  This helps protect the API from abuse, including mitigating potential DDoS attacks, and ensures fair usage.
+    This helps protect the API from abuse, including mitigating potential DDoS attacks, and ensures fair usage.
 
 **Testing:**
 
@@ -140,6 +143,15 @@ The Book Management API is a Ruby on Rails application designed to manage a libr
 **Code Quality:**
 
 - **RuboCop:**
-To maintain code quality and consistency, RuboCop is used throughout the project. The configuration enforces best practices and coding standards, ensuring that the codebase remains clean and maintainable as the application grows.
+  To maintain code quality and consistency, RuboCop is used throughout the project. The configuration enforces best practices and coding standards, ensuring that the codebase remains clean and maintainable as the application grows.
 
+**Performance Optimizations:**
 
+- **Partial Indexes:**
+  Partial indexes are employed on the transactions table to optimize queries based on transaction type, in preparation for future feature enhancements.
+
+- **User Table Indexing and Caching:**
+  The users table already has a unique index on the account_number field to ensure fast lookups. As the number of users grows, additional indexes on frequently queried columns may be added. Furthermore, I plan to evaluate the use of caching mechanisms—such as Redis—to further enhance performance and scalability under heavy load.
+
+- **Caching Strategies:**
+  To improve performance under heavy load, I plan to investigate the integration of caching mechanisms. In the future, if the number of users and query frequency increases significantly, I may incorporate Redis-based caching to reduce database load and enhance response times.

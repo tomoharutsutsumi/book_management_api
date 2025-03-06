@@ -21,6 +21,8 @@ RSpec.describe 'Api::V1::Users', type: :request do
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
       expect(json['id']).to eq(user.id)
+      expect(json['current_balance']).to eq(50.0)
+      expect(json['borrowed_book']).to eq([])
     end
   end
 

@@ -6,7 +6,7 @@ module Rack
   class Attack
     # Throttle requests: limit each IP to 100 requests per 10 minutes.
     if Rails.env.test?
-      throttle('req/ip', limit: 10, period: 1.minute, &:ip)
+      throttle('req/ip', limit: 20, period: 1.minute, &:ip)
     else
       throttle('req/ip', limit: 100, period: 10.minutes, &:ip)
     end

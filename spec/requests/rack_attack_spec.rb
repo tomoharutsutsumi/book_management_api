@@ -9,7 +9,7 @@ RSpec.describe "Rack::Attack Rate Limiting", type: :request do
   end
 
   it "throttles requests after reaching the limit" do
-    limit = 10
+    limit = 20
 
     limit.times do |i|
       get "/api/v1/users/#{user.id}/reports?period=monthly", as: :json

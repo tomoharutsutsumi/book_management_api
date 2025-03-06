@@ -29,6 +29,8 @@ module Api
           current_balance: user.balance.to_f,
           borrowed_book: borrowed_books.as_json(only: %i[id title])
         }
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: 'User not found' }, status: :not_found
       end
 
       def reports

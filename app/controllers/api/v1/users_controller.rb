@@ -48,7 +48,7 @@ module Api
       private
 
       def user_params
-        params.require(:user).permit(:id)
+        params.require(:user).permit(:id, :balance)
       end
     end
   end

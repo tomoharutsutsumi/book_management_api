@@ -12,6 +12,9 @@ class Book < ApplicationRecord
   validates :status, presence: true, inclusion: { in: statuses.keys }
 
   def self.borrowed_by(user)
+    # Using includes for transactions to enable eager loading.
+    # Although currently the filtering is the same with or without includes,
+    # this may be beneficial for future transaction-related optimizations.
     includes(:transactions)
       .where(transactions: { user_id: user.id, transaction_type: Transaction.transaction_types[:borrow] })
       .where(status: Book.statuses[:borrowed])

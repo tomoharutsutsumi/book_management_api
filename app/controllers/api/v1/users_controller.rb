@@ -19,9 +19,6 @@ module Api
       def show
         user = User.find(params[:id])
 
-        # Using includes for transactions to enable eager loading.
-        # Although currently the filtering is the same with or without includes,
-        # this may be beneficial for future transaction-related optimizations.
         borrowed_books = Book.borrowed_by(user)
 
         render json: {

@@ -8,7 +8,6 @@ class Book < ApplicationRecord
 
   has_many :transactions, dependent: :destroy
 
-  # heroku run rails db:seed?
   validates :title, presence: true
   validates :status, presence: true, inclusion: { in: statuses.keys }
 

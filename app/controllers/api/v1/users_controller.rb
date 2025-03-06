@@ -26,8 +26,7 @@ module Api
 
         render json: {
           id: user.id,
-          account_number: user.account_number,
-          balance: user.balance,
+          current_balance: user.balance,
           borrowed_book: borrowed_books.as_json(only: %i[id title])
         }
       end

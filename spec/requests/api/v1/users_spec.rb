@@ -19,7 +19,6 @@ RSpec.describe 'Api::V1::Users', type: :request do
       expect(response).to have_http_status(:ok)
       json = JSON.parse(response.body)
       expect(json['id']).to eq(user.id)
-      expect(json['account_number']).to eq(user.account_number)
     end
   end
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Transaction, type: :model do
@@ -34,7 +36,7 @@ RSpec.describe Transaction, type: :model do
     let(:user) { create(:user, balance: 100.0) }
     let(:book) { create(:book, title: 'Test Book', status: :borrowed) }
 
-    it "is valid with valid attributes" do
+    it 'is valid with valid attributes' do
       transaction = Transaction.new(user: user, book: book, transaction_type: :borrow, fee_amount: 0.0)
       expect(transaction).to be_valid
     end

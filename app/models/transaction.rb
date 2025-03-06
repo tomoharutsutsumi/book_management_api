@@ -1,3 +1,8 @@
+# frozen_string_literal: true
+
+# Represents a Transaction in the library system.
+# A Transaction records either a borrow or return event, along with any associated fee.
+# Provides class methods to process borrow and return actions within a database transaction.
 class Transaction < ApplicationRecord
   DEFAULT_BORROW_FEE = 10.0
 
@@ -10,7 +15,7 @@ class Transaction < ApplicationRecord
   validates :fee_amount, presence: true, numericality: { greater_than_or_equal_to: 0 }
 
   def self.process_borrow!(user, book)
-    t = self.new(user: user, book: book, transaction_type: :borrow, fee_amount: 0.0)
+    t = new(user: user, book: book, transaction_type: :borrow, fee_amount: 0.0)
     ActiveRecord::Base.transaction do
       book.borrowed!
       t.save!
@@ -20,7 +25,7 @@ class Transaction < ApplicationRecord
   end
 
   def self.process_return!(user, book)
-    t = self.new(user: user, book: book, transaction_type: :return, fee_amount: DEFAULT_BORROW_FEE)
+    t = new(user: user, book: book, transaction_type: :return, fee_amount: DEFAULT_BORROW_FEE)
     ActiveRecord::Base.transaction do
       user.update!(balance: user.balance - DEFAULT_BORROW_FEE)
       book.available!

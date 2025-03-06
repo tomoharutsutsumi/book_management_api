@@ -36,7 +36,7 @@ RSpec.describe Transaction, type: :model do
     it { should define_enum_for(:transaction_type).with_values(borrow: 0, return: 1) }
   end
 
-  describe '.process_borrow!' do
+  describe '#process_borrow!' do
     let(:user) { create(:user, balance: 100.0) }
     let(:book) { create(:book, title: 'Test Book', status: :available) }
 
@@ -49,7 +49,7 @@ RSpec.describe Transaction, type: :model do
     end
   end
 
-  describe '.process_return!' do
+  describe '#process_return!' do
     let(:user) { create(:user, balance: 100.0) }
     let(:book) { create(:book, title: 'Test Book', status: :borrowed) }
 

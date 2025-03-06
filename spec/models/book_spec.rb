@@ -61,7 +61,7 @@ RSpec.describe Book, type: :model do
     expect(book.borrowed?).to be true
   end
 
-  describe '.borrowed_by' do
+  describe '#borrowed_by' do
     let(:user) { create(:user, balance: 100.0) }
     let!(:book1) { create(:book, title: 'Book 1', status: :borrowed) }
     let!(:book2) { create(:book, title: 'Book 2', status: :available) }

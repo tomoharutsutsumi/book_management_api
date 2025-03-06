@@ -23,7 +23,7 @@ module Rack
     # end
   end
 
-  # # Optionally log blocked requests for debugging.
+  # Optionally log blocked requests for debugging.
   # ActiveSupport::Notifications.subscribe('rack.attack') do |_, _, _, _, req|
   #   Rails.logger.info "Rack::Attack blocked request: #{req.ip}" if req.env['rack.attack.match_type']
   # end

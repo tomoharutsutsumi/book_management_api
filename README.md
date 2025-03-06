@@ -1,5 +1,3 @@
-# README
-
 ## Overview
 
 The Book Management API is a Ruby on Rails application designed to manage a library’s book borrowing system. It provides endpoints for creating users, borrowing and returning books, querying user account status, and generating monthly/annual reports on user activity. Additionally, the API implements rate limiting via Rack::Attack and uses partial indexes on the transactions table for performance improvements.

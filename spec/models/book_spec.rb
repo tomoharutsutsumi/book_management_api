@@ -34,6 +34,49 @@ RSpec.describe Book, type: :model do
         expect(book.income(start_date: start_date, end_date: end_date)).to eq(15.0)
       end
     end
+
+    context 'when no transactions exist' do
+      let(:empty_book) { create(:book, title: 'Empty Book', status: :available) }
+
+      it 'returns 0 as income' do
+        expect(empty_book.income).to eq(0)
+      end
+    end
+  end
+
+  it 'is valid with a title' do
+    book = Book.new(title: 'Test Book', status: :available)
+    expect(book).to be_valid
+  end
+
+  it 'is invalid without a title' do
+    book = Book.new(status: :available)
+    expect(book).not_to be_valid
+  end
+
+  it 'properly handles status enum' do
+    book = Book.create!(title: 'Test Book', status: :available)
+    expect(book.available?).to be true
+    book.borrowed!
+    expect(book.borrowed?).to be true
+  end
+
+  describe '.borrowed_by' do
+    let(:user) { create(:user, balance: 100.0) }
+    let!(:book1) { create(:book, title: 'Book 1', status: :borrowed) }
+    let!(:book2) { create(:book, title: 'Book 2', status: :available) }
+    let!(:book3) { create(:book, title: 'Book 3', status: :borrowed) }
+
+    before do
+      create(:transaction, user: user, book: book1, transaction_type: :borrow, fee_amount: 0.0)
+      create(:transaction, user: user, book: book3, transaction_type: :borrow, fee_amount: 0.0)
+    end
+
+    it 'returns only the books that are currently borrowed by the user' do
+      borrowed_books = Book.borrowed_by(user)
+      expect(borrowed_books).to include(book1, book3)
+      expect(borrowed_books).not_to include(book2)
+    end
   end
 
   it 'is valid with a title' do

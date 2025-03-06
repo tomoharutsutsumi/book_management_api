@@ -9,6 +9,8 @@ RSpec.describe 'Api::V1::Users', type: :request do
       expect(response).to have_http_status(:created)
       json = JSON.parse(response.body)
       expect(json['id']).to be_present
+      created_user = User.find(json['id'])
+      expect(created_user.balance).to eq(100.0)
     end
   end
 
